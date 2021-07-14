@@ -112,3 +112,22 @@ export type DataEditorProps<
 export type DataEditorComponent<
   Cell extends CellBase = CellBase
 > = ComponentType<DataEditorProps<Cell>>;
+
+export interface SpreadsheetStyles {
+  spreadsheet: string;
+  table: string;
+  header: string;
+  cell: string;
+  cellReadonly: string;
+  activeCell: string;
+  activeCellEdit: string;
+  activeCellView: string;
+  dataViewer: string;
+  dataViewerBoolean: string;
+  dataEditor: string;
+  floatingRect: string;
+  floatingRectHidden: string;
+  floatingRectSelected: string;
+  floatingRectDragging: string;
+  floatingRectCopied: string;
+}

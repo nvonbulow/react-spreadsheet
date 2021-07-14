@@ -34,6 +34,27 @@ import * as Matrix from "./matrix";
 import * as Actions from "./actions";
 import "./Spreadsheet.css";
 
+type CSSModuleClasses = { readonly [key: string]: string };
+
+const baseStyles: Types.SpreadsheetStyles = {
+  spreadsheet: "Spreadsheet",
+  table: "Spreadsheet__table",
+  header: "Spreadsheet__header",
+  cell: "Spreadsheet__cell",
+  cellReadonly: "Spreadsheet__cell--readonly",
+  activeCell: "Spreadsheet__active-cell",
+  activeCellEdit: "Spreadsheet__active-cell--edit",
+  activeCellView: "Spreadsheet__active-cell--view",
+  dataViewer: "Spreadsheet__data-viewer",
+  dataViewerBoolean: "Spreadsheet__data-viewer--boolean",
+  dataEditor: "Spreadsheet__data-editor",
+  floatingRect: "Spreadsheet__floating-rect",
+  floatingRectHidden: "Spreadsheet__floating-rect--hidden",
+  floatingRectSelected: "Spreadsheet__floating-rect--selected",
+  floatingRectDragging: "Spreadsheet__floating-rect-dragging",
+  floatingRectCopied: "Spreadsheet__floating-rect-copied",
+};
+
 export type Props<CellType extends Types.CellBase> = {
   formulaParser?: FormulaParser;
   columnLabels?: string[];
@@ -54,6 +75,8 @@ export type Props<CellType extends Types.CellBase> = {
   getBindingsForCell?: Types.getBindingsForCell<CellType>;
   // Internal store
   store: Store<Types.StoreState<CellType>>;
+  // Style overrides
+  styles?: Partial<Types.SpreadsheetStyles> & CSSModuleClasses;
 };
 
 type Handlers = {
@@ -235,10 +258,16 @@ class Spreadsheet<CellType extends Types.CellBase> extends React.PureComponent<
       getBindingsForCell = defaultGetBindingsForCell,
       RowIndicator = DefaultRowIndicator,
       ColumnIndicator = DefaultColumnIndicator,
+      styles: styleOverrides = {},
     } = this.props;
 
     // @ts-ignore
     const Cell = this.getCellComponent(this.props.Cell || DefaultCell);
+
+    const styles: Types.SpreadsheetStyles = {
+      ...baseStyles,
+      ...styleOverrides,
+    };
 
     return (
       <div
@@ -248,9 +277,15 @@ class Spreadsheet<CellType extends Types.CellBase> extends React.PureComponent<
         onKeyDown={this.handleKeyDown}
         onMouseMove={this.handleMouseMove}
       >
-        <Table columns={columns} hideColumnIndicators={hideColumnIndicators}>
-          <Row>
-            {!hideRowIndicators && !hideColumnIndicators && <CornerIndicator />}
+        <Table
+          columns={columns}
+          hideColumnIndicators={hideColumnIndicators}
+          styles={styles}
+        >
+          <Row styles={styles}>
+            {!hideRowIndicators && !hideColumnIndicators && (
+              <CornerIndicator styles={styles} />
+            )}
             {!hideColumnIndicators &&
               range(columns).map((columnNumber) =>
                 columnLabels ? (
